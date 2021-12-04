@@ -1,0 +1,1 @@
+mongoimport --db=app_db --collection=products --file=/data/initial_products.json --jsonArray --mode=upsert --username=admin --password=admin --authenticationDatabase=admin

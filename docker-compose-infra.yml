@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+  ##### MongoDB #####
+  si_mongodb:
+    container_name: si_mongodb
+    image: "mongo:4.4-bionic"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+      - MONGO_INITDB_DATABASE=app_db
+    volumes:
+      - ./si-mongodb-entrypoint/initial_products.json:/data/initial_products.json
+      - ./si-mongodb-entrypoint/populate.sh:/docker-entrypoint-initdb.d/populate.sh
+      - ./si_mongodb/data/db:/data/db
+    ports:
+      - "27017:27017"
+
+networks:
+  default:
+    name: dapr_network
+    driver: bridge

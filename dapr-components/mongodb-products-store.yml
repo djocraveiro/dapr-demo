@@ -1,0 +1,20 @@
+#https://docs.dapr.io/reference/components-reference/supported-state-stores/setup-mongodb/
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: mongodb-products-store
+  namespace: default
+spec:
+  type: state.mongodb
+  version: v1
+  metadata:
+  - name: host
+    value: "localhost:27017"
+  - name: username
+    value: "admin"
+  - name: password
+    value: "admin"
+  - name: databaseName
+    value: "app_db"
+  - name: collectionName
+    value: "products"
