@@ -1,0 +1,202 @@
+﻿body {
+  background-color: #f7f7f7;
+}
+
+.checked {
+  color: orange;
+}
+
+.fa-star {
+  cursor: pointer;
+}
+
+button.navbar-brand.fa-lg {
+  font-size: xx-large;
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+
+button .fa-shopping-cart {
+  color: white;
+}
+
+.fa[data-count] {
+  position: relative;
+}
+.fa[data-count]:after {
+  position: absolute;
+  right: -0.75em;
+  top: -0.75em;
+  content: attr(data-count);
+  padding: 0.4em;
+  border-radius: 10em;
+  line-height: 0.9em;
+  color: white;
+  background: rgba(255, 0, 0, 0.75);
+  text-align: center;
+  min-width: 2em;
+  font: bold 0.4em sans-serif;
+}
+
+#checkoutModal .modal-header .card-body {
+  padding: 0;
+}
+
+#checkoutModal .modal-header,
+#productModal .modal-header {
+  background-color: #252152;;
+}
+
+.card-columns .card-body {
+  height: 100px;
+  font-family: "Nunito", sans-serif;
+  background: #fbfafd;
+  text-align: center;
+}
+
+p.card-title {
+  font-size: 1.1rem;
+}
+
+.card-columns .card-frame {
+  padding: 0.5rem 2.5rem;
+  margin: 0 auto;
+  min-height: 120px;
+  text-align: center;
+}
+
+.card-img-resp {
+  width:100%;
+}
+
+.modal .card-frame {
+  padding: 1rem;
+  margin: 0 auto;
+  min-height: 200px;
+  text-align: center;
+}
+
+.card-footer {
+  background: #fbfafd;
+}
+
+a.navbar-brand {
+  white-space: normal;
+  font-family: "Yellowtail", cursive;
+  font-size: xx-large;
+  text-align: center;
+  word-break: break-all;
+  color: white !important;
+}
+
+/* Provide sufficient contrast against white background */
+a {
+  color: #0366d6;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #252152;
+  border-color: #252152;
+  margin: 0.2rem;
+}
+.btn-primary:hover {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1b6ec2;
+}
+
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  font-size: 14px;
+}
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.border-top {
+  border-top: 1px solid #e5e5e5;
+}
+.border-bottom {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
+}
+
+button.accept-policy {
+  font-size: 1rem;
+  line-height: inherit;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+}
+p {
+  font-family: "Nunito", sans-serif;
+}
+h1 {
+  font-family: "Nunito", sans-serif;
+}
+ul {
+  font-family: "Nunito", sans-serif;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px; /* Vertically center the text there */
+  font-family: "Nunito", sans-serif;
+}
+/*Backgrounds*/
+.bg-navbar {
+  background-color: #252152;
+}
+.bg-footer {
+  background-color: #252152;
+}
+
+@media (min-width: 992px) {
+  .card-columns {
+    -webkit-column-count: 4;
+    -moz-column-count: 4;
+    column-count: 4;
+    -webkit-column-gap: 1.25rem;
+    -moz-column-gap: 1.25rem;
+    column-gap: 1.25rem;
+    orphans: 1;
+    widows: 1;
+  }
+}
+
+.list-pager {
+  display: flex;
+  align-items: center;
+  justify-content:center;
+  margin: 0.75rem 0;
+}
+
+.list-pager p {
+  margin: 0.2rem 1rem;
+}

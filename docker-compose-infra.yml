@@ -15,6 +15,13 @@ services:
       - ./si_mongodb/data/db:/data/db
     ports:
       - "27017:27017"
+  
+  ##### Zipkin #####
+  zipkin:
+    container_name: "zipkin_service"
+    image: "openzipkin/zipkin:2.23.2"
+    ports:
+      - 9411:9411
 
 networks:
   default:

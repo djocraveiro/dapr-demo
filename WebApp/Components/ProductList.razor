@@ -1,0 +1,44 @@
+@inherits ProductListBase
+
+<div>
+    <div class="card-columns">
+        @if(products != null)
+        {
+            @foreach (var product in products)
+            {
+                <div class="card">
+                    <div class="card-frame">
+                        <img src="@product.Image" alt="Image Not Available" class="card-img-resp">
+                    </div>
+                    <div class="card-body">
+                        <p class="card-title">@product.Name</p>
+                        <p>@product.Price</p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">
+                            <button @onclick="(e => SelectProduct(product.Id))"
+                                    data-toggle="modal" data-target="#productModal" class="btn btn-primary">
+                                Info
+                            </button>
+                            <button class="btn btn-primary" @onclick="(e => AddToCart(product.Id, product.Name))">
+                                Add to cart
+                            </button>
+                        </small>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+    <div class="list-pager">
+        @if(hasPreviousPage)
+        {
+            <button class="btn btn-primary" @onclick="(e => PreviousPage())">&lt;&lt; Back</button>
+        }
+        <p>Page @curPage</p>
+        @if(hasNextPage)
+        {
+            <button class="btn btn-primary" @onclick="(e => NextPage())">Next &gt;&gt;</button>
+        }
+    </div>
+    <ProductModal Product="@selectedProduct"></ProductModal>
+</div>

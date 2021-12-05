@@ -1,0 +1,73 @@
+version: "3.7"
+
+services:
+  ##### WebApp & DAPR Sidecar #####
+  webapp:
+    build:
+      context: ./WebApp
+      dockerfile: Dockerfile
+    container_name: webapp
+    env_file:
+      - .env
+    ports:
+      - "5011:80"
+
+  webapp_dapr:
+    image: "daprio/daprd:1.5.0"
+    command:
+      [
+        "./daprd",
+        "-app-id",
+        "webapp",
+        "-app-port",
+        "80",
+        "-config",
+        "/dapr/dapr_config.yaml",
+        "-components-path",
+        "/dapr/local",
+      ]
+    volumes:
+      - "./dapr-components:/dapr"      
+    depends_on:
+      - webapp
+    network_mode: "service:webapp"
+    env_file:
+      - .env
+
+  ##### API & DAPR Sidecar #####
+  productsapi:
+    build:
+      context: ./ProductApi
+      dockerfile: Dockerfile
+    container_name: productsapi
+    env_file:
+      - .env
+    ports:
+      - "5021:80"
+
+  productsapi_dapr:
+    image: "daprio/daprd:1.5.0"
+    command:
+      [
+        "./daprd",
+        "-app-id",
+        "productsapi",
+        "-app-port",
+        "80",
+        "-config",
+        "/dapr/dapr_config.yaml",
+        "-components-path",
+        "/dapr/local",
+      ]
+    volumes:
+      - "./dapr-components:/dapr"
+    depends_on:
+      - productsapi
+    network_mode: "service:productsapi"
+    env_file:
+      - .env
+
+networks:
+  default:
+    external:
+      name: dapr_network
