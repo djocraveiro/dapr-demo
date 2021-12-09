@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using WebApp.Models;
 
-namespace WebApp.Services;
+namespace WebApp.Services.Contracts;
 
 public interface IProductService
 {

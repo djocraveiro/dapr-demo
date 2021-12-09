@@ -1,4 +1,4 @@
-@inherits ProductListBase
+@inherits ProductListComponent
 
 <div>
     <div class="card-columns">
@@ -20,7 +20,7 @@
                                     data-toggle="modal" data-target="#productModal" class="btn btn-primary">
                                 Info
                             </button>
-                            <button class="btn btn-primary" @onclick="(e => AddToCart(product.Id, product.Name))">
+                            <button class="btn btn-primary" @onclick="(e => AddToCart(product))">
                                 Add to cart
                             </button>
                         </small>

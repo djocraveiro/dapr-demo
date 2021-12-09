@@ -1,5 +1,6 @@
 using System;
 using WebApp.Services;
+using WebApp.Services.Contracts;
 using EventAggregator.Blazor;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -30,6 +31,7 @@ public class Startup
         services.AddControllers();
         services.AddScoped<IEventAggregator, EventAggregator.Blazor.EventAggregator>();
         services.AddSingleton<IProductService, DaprProductService>();
+        services.AddSingleton<ICartService, CartService>();
     }
 
     public void Configure(IApplicationBuilder app)

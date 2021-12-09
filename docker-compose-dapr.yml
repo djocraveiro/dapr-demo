@@ -1,14 +1,16 @@
 version: "3.7"
 
 services:
-  ##### WebApp & DAPR Sidecar #####
+  # WebApp & DAPR Sidecar
   webapp:
     build:
       context: ./WebApp
       dockerfile: Dockerfile
     container_name: webapp
-    env_file:
-      - .env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - PRODUCTS_APP_ID=productsapi
+      - CART_STORE=statestore
     ports:
       - "5011:80"
 
@@ -17,31 +19,29 @@ services:
     command:
       [
         "./daprd",
-        "-app-id",
-        "webapp",
-        "-app-port",
-        "80",
-        "-config",
-        "/dapr/dapr_config.yaml",
-        "-components-path",
-        "/dapr/local",
+        "-app-id", "webapp",
+        "-app-port", "80",
+        "-config", "/dapr/dapr_config.yaml",
+        "-components-path", "/dapr/components",
       ]
     volumes:
-      - "./dapr-components:/dapr"      
+      - "./infrastructure/dapr:/dapr"
     depends_on:
       - webapp
     network_mode: "service:webapp"
     env_file:
       - .env
 
-  ##### API & DAPR Sidecar #####
+
+  # ProductApi & DAPR Sidecar
   productsapi:
     build:
       context: ./ProductApi
       dockerfile: Dockerfile
     container_name: productsapi
-    env_file:
-      - .env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - MONGO_CONNECTION=mongodb://admin:admin@si_mongodb:27017
     ports:
       - "5021:80"
 
@@ -50,22 +50,19 @@ services:
     command:
       [
         "./daprd",
-        "-app-id",
-        "productsapi",
-        "-app-port",
-        "80",
-        "-config",
-        "/dapr/dapr_config.yaml",
-        "-components-path",
-        "/dapr/local",
+        "-app-id", "productsapi",
+        "-app-port", "80",
+        "-config", "/dapr/dapr_config.yaml",
+        "-components-path", "/dapr/components",
       ]
     volumes:
-      - "./dapr-components:/dapr"
+      - "./infrastructure/dapr:/dapr"
     depends_on:
       - productsapi
     network_mode: "service:productsapi"
     env_file:
       - .env
+
 
 networks:
   default:

@@ -1,27 +1,38 @@
 version: "3.7"
 
 services:
-  ##### MongoDB #####
+  # MongoDB
   si_mongodb:
     container_name: si_mongodb
     image: "mongo:4.4-bionic"
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=admin
-      - MONGO_INITDB_DATABASE=app_db
+    env_file:
+      - ./infrastructure/.env.mongodb
     volumes:
-      - ./si-mongodb-entrypoint/initial_products.json:/data/initial_products.json
-      - ./si-mongodb-entrypoint/populate.sh:/docker-entrypoint-initdb.d/populate.sh
+      - ./infrastructure/si-mongodb-entrypoint/initial_products.json:/data/initial_products.json
+      - ./infrastructure/si-mongodb-entrypoint/populate.sh:/docker-entrypoint-initdb.d/populate.sh
       - ./si_mongodb/data/db:/data/db
     ports:
       - "27017:27017"
   
-  ##### Zipkin #####
+      
+  # Zipkin
   zipkin:
     container_name: "zipkin_service"
     image: "openzipkin/zipkin:2.23.2"
     ports:
       - 9411:9411
+
+
+  # Redis
+  si_redis:
+    container_name: "si_redis"
+    image: "redis:6.2-alpine"
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./infrastructure/redis.conf:/usr/local/etc/redis/redis.conf
+
 
 networks:
   default:
