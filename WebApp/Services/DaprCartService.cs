@@ -7,16 +7,19 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-public class CartService : ICartService
+public class DaprCartService : ICartService
 {
     private IHttpClientFactory _clientFactory { get; set; }
     private HttpClient DaprClient => _clientFactory.CreateClient("dapr");
+    private const string CartStoreKey = "cart";
     private readonly string _cartStore;
+    private readonly string _cartEventBus;
 
-    public CartService(IHttpClientFactory clientFactory)
+    public DaprCartService(IHttpClientFactory clientFactory)
     {
         _clientFactory = clientFactory;
         _cartStore = Environment.GetEnvironmentVariable("CART_STORE");
+        _cartEventBus = Environment.GetEnvironmentVariable("CART_EVENT_BUS");
     }
 
     public async Task<int> AddToCart(Product product)
@@ -45,11 +48,27 @@ public class CartService : ICartService
         return cartState.Keys.Count;
     }
 
+    public async Task<IEnumerable<CartItem>> GetCartItems()
+    {
+        var cartState =  await ReadCart();
+        return cartState.Values;
+    }
+
+    public async Task SubmitCart(IEnumerable<CartItem> items)
+    {
+        var payload = JsonSerializer.Serialize(items);
+        var content = new StringContent(payload, Encoding.UTF8, "application/json");
+
+        await DaprClient.PostAsync($"v1.0/publish/{_cartEventBus}", content);
+
+        await ClearCart();
+    }
+
     private async Task SaveCart(Dictionary<string, CartItem> value)
     {
         var payload = JsonSerializer.Serialize(new[] 
         {
-            new { key = "cart", value = value }
+            new { key = CartStoreKey, value = value }
         });
 
         var content = new StringContent(payload, Encoding.UTF8, "application/json");
@@ -58,7 +77,7 @@ public class CartService : ICartService
 
     private async Task<Dictionary<string, CartItem>> ReadCart()
     {
-        var response = await DaprClient.GetAsync($"v1.0/state/{_cartStore}/cart");
+        var response = await DaprClient.GetAsync($"v1.0/state/{_cartStore}/{CartStoreKey}");
 
         if (response.IsSuccessStatusCode && response.StatusCode == HttpStatusCode.OK)
         {
@@ -67,5 +86,10 @@ public class CartService : ICartService
         }
 
         return new Dictionary<string, CartItem>();
+    }
+
+    private async Task ClearCart()
+    {
+        var response = await DaprClient.DeleteAsync($"v1.0/state/{_cartStore}/{CartStoreKey}");
     }
 }

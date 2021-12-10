@@ -1,0 +1,20 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: rabbitmqbus
+  namespace: default
+spec:
+  type: pubsub.rabbitmq
+  metadata:
+  - name: host
+    secretKeyRef:
+      name: rabbitMqConnString
+      key: rabbitMqConnString
+  - name: consumerID
+    value: "cart_checkout_consumer"
+  - name: durable
+    value: "false"
+  - name: deletedWhenUnused
+    value: "false"
+auth:
+  secretStore: localsecrets

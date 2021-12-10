@@ -10,7 +10,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - PRODUCTS_APP_ID=productsapi
-      - CART_STORE=statestore
+      - CART_STORE=redis_statestore
+      - CART_EVENT_BUS=rabbitmqbus/cart-checkout
     ports:
       - "5011:80"
 
@@ -41,7 +42,6 @@ services:
     container_name: productsapi
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - MONGO_CONNECTION=mongodb://admin:admin@si_mongodb:27017
     ports:
       - "5021:80"
 

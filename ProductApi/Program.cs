@@ -19,13 +19,17 @@ builder.Services.AddControllers()
 
 builder.Services.AddSingleton<IMongoClient>(provider =>
     {
-        var config = provider.GetService<IConfiguration>();
-        if (config == null)
+        const string secretKey = "mongodbConnString";
+        using var client = new Dapr.Client.DaprClientBuilder().Build();
+        var secret = client.GetSecretAsync("localsecrets", secretKey).Result;
+        
+        var mongodbConnString = secret?[secretKey];
+        if (string.IsNullOrWhiteSpace(mongodbConnString))
         {
-            throw new Exception("invalid configuration");
+            throw new Exception($"invalid {secretKey}");
         }
 
-        return new MongoClient(config["MONGO_CONNECTION"]);
+        return new MongoClient(mongodbConnString);
     });
 
 builder.Services.AddScoped<IProductService, ProductService>();

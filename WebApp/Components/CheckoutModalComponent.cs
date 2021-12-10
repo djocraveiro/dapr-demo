@@ -15,7 +15,7 @@ public class CheckoutModalComponent : ComponentBase, EventAggregator.Blazor.IHan
     private IEventAggregator EventAggregator { get; set; }
 
     [Inject]
-    private IHttpClientFactory ClientFactory { get; set; }
+    private ICartService CartService { get; set; }
 
     protected IEnumerable<CartItem> Items { get; set; }
 
@@ -26,33 +26,26 @@ public class CheckoutModalComponent : ComponentBase, EventAggregator.Blazor.IHan
     
     public async Task HandleAsync(CheckoutStarted cartUpdated)
     {
-        //TODO
-        /*// get state
-        var client = ClientFactory.CreateClient("dapr");
-        var resp = await client.GetAsync($"v1.0/state/{Constants.STORE_NAME}/cart");
-
-        if (!resp.IsSuccessStatusCode || resp.StatusCode == HttpStatusCode.NoContent) return;
-
-        var responseBody = await resp.Content.ReadAsStringAsync();
-        var state = JsonSerializer.Deserialize<Dictionary<string, CartItem>>(responseBody);
-        Items = state.Values;*/
+        Items = await CartService.GetCartItems();
         StateHasChanged();
     }
 
     protected async Task SubmitCheckout()
     {
-        //TODO
-        /*if (Items == null || !Items.Any()) return;
+        if (Items == null || !Items.Any())
+        {
+            return;
+        }
 
-        var client = ClientFactory.CreateClient("dapr");
-        var resp = await client.DeleteAsync($"v1.0/state/{Constants.STORE_NAME}/cart");
+        await CartService.SubmitCart(Items);
 
-        var payload = JsonSerializer.Serialize(Items);
-        var content = new StringContent(payload, Encoding.UTF8, "application/json");
-        await client.PostAsync($"v1.0/publish/{Constants.PUBSUB_NAME}/checkout", content);
+        Items = new CartItem[] {};
 
-        Items = null;
-        await EventAggregator.PublishAsync(new ShoppingCartUpdated { ItemCount = 0 });*/
+        await EventAggregator.PublishAsync(new ShoppingCartUpdated
+        {
+            ItemCount = Items.Count()
+        });
+
         StateHasChanged();
     }
 }

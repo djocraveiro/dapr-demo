@@ -31,7 +31,7 @@ public class Startup
         services.AddControllers();
         services.AddScoped<IEventAggregator, EventAggregator.Blazor.EventAggregator>();
         services.AddSingleton<IProductService, DaprProductService>();
-        services.AddSingleton<ICartService, CartService>();
+        services.AddSingleton<ICartService, DaprCartService>();
     }
 
     public void Configure(IApplicationBuilder app)

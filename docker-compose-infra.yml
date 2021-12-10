@@ -34,6 +34,18 @@ services:
       - ./infrastructure/redis.conf:/usr/local/etc/redis/redis.conf
 
 
+  # RabbitMQ
+  si_rabbitmq:
+    image: "rabbitmq:3.9-management"
+    container_name: "si_rabbitmq"
+    hostname: "si_rabbitmq"
+    env_file:
+      - ./infrastructure/.env.rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+
+
 networks:
   default:
     name: dapr_network

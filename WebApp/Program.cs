@@ -9,12 +9,6 @@ using Microsoft.Extensions.Logging;
 
 namespace WebApp;
 
-public static class Constants
-{
-    public const string PUBSUB_NAME = "rabbitmqbus";
-
-}
-
 public class Program
 {
     public static void Main(string[] args)
