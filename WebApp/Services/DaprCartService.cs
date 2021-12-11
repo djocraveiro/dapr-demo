@@ -39,7 +39,8 @@ public class DaprCartService : ICartService
             cartState[product.Id] = new CartItem 
             {
                 Name = product.Name,
-                Quantity = 1
+                Quantity = 1,
+                Price = product.Price
             };
         }
 

@@ -19,6 +19,8 @@ public class CheckoutModalComponent : ComponentBase, EventAggregator.Blazor.IHan
 
     protected IEnumerable<CartItem> Items { get; set; }
 
+    protected double totalPrice = 0;
+
     protected override void OnInitialized()
     {
         EventAggregator.Subscribe(this);
@@ -27,6 +29,8 @@ public class CheckoutModalComponent : ComponentBase, EventAggregator.Blazor.IHan
     public async Task HandleAsync(CheckoutStarted cartUpdated)
     {
         Items = await CartService.GetCartItems();
+        totalPrice = GetTotalPrice();
+
         StateHasChanged();
     }
 
@@ -40,6 +44,7 @@ public class CheckoutModalComponent : ComponentBase, EventAggregator.Blazor.IHan
         await CartService.SubmitCart(Items);
 
         Items = new CartItem[] {};
+        totalPrice = 0;
 
         await EventAggregator.PublishAsync(new ShoppingCartUpdated
         {
@@ -47,5 +52,17 @@ public class CheckoutModalComponent : ComponentBase, EventAggregator.Blazor.IHan
         });
 
         StateHasChanged();
+    }
+
+    private double GetTotalPrice()
+    {
+        double total = 0;
+
+        foreach(var item in Items)
+        {
+            total += (item.Price * item.Quantity);
+        }
+
+        return total;
     }
 }

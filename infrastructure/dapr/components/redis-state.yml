@@ -12,5 +12,7 @@ spec:
       secretKeyRef:
         name: redisPassword
         key: redisPassword
+    - name: ttlInSeconds
+      value: 21600 #6 hours
 auth:
   secretStore: localsecrets
