@@ -16,6 +16,7 @@
                     <th>Name</th>
                     <th>Quantity</th>
                     <th>Price/Unit</th>
+                    <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -26,17 +27,24 @@
                             <td>@item.Name</td>
                             <td>@item.Quantity</td>
                             <td>@item.Price</td>
+                            <td>
+                                <button class="btn btn-danger"  data-toggle="modal" data-target="#checkoutModal"
+                                    @onclick="(e => RemoveItem(item.Id))">X</button>
+                            </td>
                             </tr>
                         }
                     }
                     <tr>
-                    <td colspan="3">@totalPrice</td>
+                    <td colspan="4" style="text-align: right"><b>Total:</b> @totalPrice</td>
                     </tr>
                 </tbody>
                 </table>
             </div>
             <div class="modal-footer">
-                 <button class="btn btn-primary"  data-toggle="modal" data-target="#checkoutModal" @onclick="(e => SubmitCheckout())">Submit</button>
+                <button class="btn btn-secondary"  data-toggle="modal" data-target="#checkoutModal"
+                                        @onclick="(e => ClearItems())">Clear</button>
+                <button class="btn btn-primary" data-toggle="modal" data-target="#checkoutModal"
+                        @onclick="(e => SubmitCheckout())">Submit</button>
             </div>
         </div>
     </div>

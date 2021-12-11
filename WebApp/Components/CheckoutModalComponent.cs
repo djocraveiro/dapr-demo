@@ -42,16 +42,41 @@ public class CheckoutModalComponent : ComponentBase, EventAggregator.Blazor.IHan
         }
 
         await CartService.SubmitCart(Items);
+        
+        await ResetCartState();
+        StateHasChanged();
+    }
 
+    protected async Task RemoveItem(string productId)
+    {
+        var itemCount = await CartService.RemoveFromCart(productId);
+        
+        await EventAggregator.PublishAsync(new ShoppingCartUpdated
+        {
+            ItemCount = itemCount
+        });
+        
+        Items = Items.Where(item => item.Id != productId);
+        StateHasChanged();
+    }
+
+    protected async Task ClearItems()
+    {
+        await CartService.ClearCartItems();
+        
+        await ResetCartState();
+        StateHasChanged();
+    }
+
+    private Task ResetCartState()
+    {
         Items = new CartItem[] {};
         totalPrice = 0;
 
-        await EventAggregator.PublishAsync(new ShoppingCartUpdated
+        return EventAggregator.PublishAsync(new ShoppingCartUpdated
         {
             ItemCount = Items.Count()
         });
-
-        StateHasChanged();
     }
 
     private double GetTotalPrice()

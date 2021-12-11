@@ -1,7 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace ProductsApi.Structures.Documents;
+namespace ProductApi.Structures.Documents;
 
 public class ProductDocument
 {

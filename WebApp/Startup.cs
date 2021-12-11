@@ -1,21 +1,17 @@
-using System;
 using WebApp.Services;
 using WebApp.Services.Contracts;
 using EventAggregator.Blazor;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace WebApp;
 
 public class Startup
 {
+    public IConfiguration Configuration { get; }
+    
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
     }
-
-    public IConfiguration Configuration { get; }
 
     public void ConfigureServices(IServiceCollection services)
     {

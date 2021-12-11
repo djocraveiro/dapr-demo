@@ -1,5 +1,5 @@
-using ProductsApi.Structures.Documents;
-using ProductsApi.Structures.Models;
+using ProductApi.Structures.Documents;
+using ProductApi.Structures.Models;
 
 namespace ProductApi.Extensions;
 

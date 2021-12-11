@@ -1,15 +1,14 @@
 using WebApp.Services.Contracts;
 using WebApp.Models;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
+
+namespace WebApp.Services;
 
 public class DaprCartService : ICartService
 {
-    private IHttpClientFactory _clientFactory { get; set; }
+    private readonly IHttpClientFactory _clientFactory;
     private HttpClient DaprClient => _clientFactory.CreateClient("dapr");
     private const string CartStoreKey = "cart";
     private readonly string _cartStore;
@@ -38,10 +37,24 @@ public class DaprCartService : ICartService
         {
             cartState[product.Id] = new CartItem 
             {
+                Id = product.Id,
                 Name = product.Name,
                 Quantity = 1,
                 Price = product.Price
             };
+        }
+
+        await SaveCart(cartState);
+
+        return cartState.Keys.Count;
+    }
+
+    public async Task<int> RemoveFromCart(string productId)
+    {
+        var cartState = await ReadCart();
+        if (cartState.ContainsKey(productId))
+        {
+            cartState.Remove(productId);
         }
 
         await SaveCart(cartState);
@@ -65,11 +78,16 @@ public class DaprCartService : ICartService
         await ClearCart();
     }
 
-    private async Task SaveCart(Dictionary<string, CartItem> value)
+    public Task ClearCartItems()
+    {
+        return ClearCart();
+    }
+
+    private async Task SaveCart(Dictionary<string, CartItem> cartState)
     {
         var payload = JsonSerializer.Serialize(new[] 
         {
-            new { key = CartStoreKey, value = value }
+            new { key = CartStoreKey, value = cartState }
         });
 
         var content = new StringContent(payload, Encoding.UTF8, "application/json");
@@ -79,18 +97,18 @@ public class DaprCartService : ICartService
     private async Task<Dictionary<string, CartItem>> ReadCart()
     {
         var response = await DaprClient.GetAsync($"v1.0/state/{_cartStore}/{CartStoreKey}");
-
-        if (response.IsSuccessStatusCode && response.StatusCode == HttpStatusCode.OK)
+        if (!response.IsSuccessStatusCode || response.StatusCode != HttpStatusCode.OK)
         {
-            var responseBody = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<Dictionary<string, CartItem>>(responseBody);
+            return new Dictionary<string, CartItem>();
         }
 
-        return new Dictionary<string, CartItem>();
+        var responseBody = await response.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<Dictionary<string, CartItem>>(responseBody);
+
     }
 
-    private async Task ClearCart()
+    private Task ClearCart()
     {
-        var response = await DaprClient.DeleteAsync($"v1.0/state/{_cartStore}/{CartStoreKey}");
+        return DaprClient.DeleteAsync($"v1.0/state/{_cartStore}/{CartStoreKey}");
     }
 }

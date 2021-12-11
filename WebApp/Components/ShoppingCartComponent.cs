@@ -1,5 +1,3 @@
-using System.Linq;
-using System.Threading.Tasks;
 using WebApp.Events;
 using WebApp.Services.Contracts;
 using EventAggregator.Blazor;
@@ -7,7 +5,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace WebApp.Components;
 
-public class ShoppingCartComponent : ComponentBase, IDisposable, EventAggregator.Blazor.IHandle<ShoppingCartUpdated>
+public class ShoppingCartComponent : ComponentBase, IDisposable, IHandle<ShoppingCartUpdated>
 {
     [Inject]
     private ICartService CartService { get; set; }
@@ -34,7 +32,7 @@ public class ShoppingCartComponent : ComponentBase, IDisposable, EventAggregator
     public Task HandleAsync(ShoppingCartUpdated cartUpdated)
     {
         shoppingCartCount = cartUpdated.ItemCount;
-        InvokeAsync(() => StateHasChanged());
+        InvokeAsync(StateHasChanged);
         return Task.CompletedTask;
     }
 

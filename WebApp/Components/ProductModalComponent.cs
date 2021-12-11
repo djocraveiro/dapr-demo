@@ -10,10 +10,7 @@ public class ProductModalComponent : ComponentBase
 
     protected override void OnParametersSet()
     {
-        if (Product == null)
-        {
-            Product = new Product();
-        }
+        Product ??= new Product();
 
         base.OnParametersSet();
     }

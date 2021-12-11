@@ -1,4 +1,4 @@
-using ProductsApi.Structures.Models;
+using ProductApi.Structures.Models;
 
 namespace ProductApi.Services.Contracts;
 

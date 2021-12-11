@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using MongoDB.Driver;
 using ProductApi.Services.Contracts;
-using ProductsApi.Services;
+using ProductApi.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);

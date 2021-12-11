@@ -2,10 +2,10 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using ProductApi.Extensions;
 using ProductApi.Services.Contracts;
-using ProductsApi.Structures.Documents;
-using ProductsApi.Structures.Models;
+using ProductApi.Structures.Documents;
+using ProductApi.Structures.Models;
 
-namespace ProductsApi.Services;
+namespace ProductApi.Services;
 
 public class ProductService : IProductService
 {
