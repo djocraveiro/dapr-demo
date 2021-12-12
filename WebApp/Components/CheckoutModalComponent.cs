@@ -88,6 +88,6 @@ public class CheckoutModalComponent : ComponentBase, EventAggregator.Blazor.IHan
             total += (item.Price * item.Quantity);
         }
 
-        return total;
+        return Math.Round(total, 2);
     }
 }
