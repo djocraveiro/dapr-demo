@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using WebApp.Events;
 using WebApp.Models;
 using WebApp.Services.Contracts;

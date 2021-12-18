@@ -11,7 +11,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - PRODUCTS_APP_ID=productsapi
       - CART_STORE=redis_statestore
-      - CART_EVENT_BUS=rabbitmqbus/cart-checkout
+      - CART_EVENT_BUS=rabbitmqbus/cart_checkout
     ports:
       - "5011:80"
 
@@ -60,6 +60,36 @@ services:
     depends_on:
       - productsapi
     network_mode: "service:productsapi"
+    env_file:
+      - .env
+
+
+  # OrderService & DAPR Sidecar
+  orderservice:
+    build:
+      context: ./OrderService
+      dockerfile: Dockerfile
+    container_name: orderservice
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5031:80"
+
+  orderservice_dapr:
+    image: "daprio/daprd:1.5.0"
+    command:
+      [
+        "./daprd",
+        "-app-id", "orderservice",
+        "-app-port", "80",
+        "-config", "/dapr/dapr_config.yaml",
+        "-components-path", "/dapr/components",
+      ]
+    volumes:
+      - "./infrastructure/dapr:/dapr"
+    depends_on:
+      - orderservice
+    network_mode: "service:orderservice"
     env_file:
       - .env
 
