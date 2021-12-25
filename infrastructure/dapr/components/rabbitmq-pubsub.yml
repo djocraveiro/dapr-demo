@@ -13,8 +13,18 @@ spec:
     - name: consumerID
       value: "cart_checkout_consumer"
     - name: durable
-      value: "false"
+      value: false
     - name: deletedWhenUnused
-      value: "false"
+      value: false
+    - name: autoAck
+      value: false
+    - name: requeueInFailure
+      value: true
+    - name: backOffPolicy
+      value: "exponential"
+    - name: backOffMaxRetries
+      value: 3
+    - name: backOffInitialInterval
+      value: 500
 auth:
   secretStore: localsecrets

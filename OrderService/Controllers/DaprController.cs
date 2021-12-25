@@ -1,3 +1,4 @@
+using System.Net;
 using CloudNative.CloudEvents.AspNetCore;
 using CloudNative.CloudEvents.SystemTextJson;
 using Microsoft.AspNetCore.Mvc;
@@ -8,23 +9,35 @@ namespace OrderService.Controllers;
 [Route("[controller]")]
 public class DaprController : ControllerBase
 {
+    private readonly Random _random = new ();
     private readonly ILogger<DaprController> _logger;
+    private readonly (string pubsubname, string topic) _cartEventBus;
     
     public DaprController(ILogger<DaprController> logger)
     {
         _logger = logger;
+        
+        var cartEventBus = Environment.GetEnvironmentVariable("CART_EVENT_BUS");
+        var parts = cartEventBus?.Split('/');
+        if (parts is not { Length: 2 })
+        {
+            throw new ArgumentException("invalid CART_EVENT_BUS");
+        }
+
+        _cartEventBus = (parts.First(), parts.Last());
     }
 
     [HttpGet("subscribe")]
     public ActionResult Subscribe()
     {
-        _logger.LogInformation("Subscription made.");
+        _logger.LogInformation("Subscription has been made.");
+        
         var payload = new[]
         {
             new
             {
-                pubsubname = "rabbitmqbus",
-                topic= "cart_checkout",
+                pubsubname = _cartEventBus.pubsubname,
+                topic= _cartEventBus.topic,
                 route = "cart_checkout"
             }
         };
@@ -40,7 +53,24 @@ public class DaprController : ControllerBase
         
         _logger.LogInformation("Order received.");
         _logger.LogDebug($"Cloud event {cloudEvent.Id} {cloudEvent.Type} {cloudEvent.DataContentType}");
+        
+        if (TryAcceptOrder())
+        {
+            _logger.LogInformation($"Order status: accepted");
+            return Ok();
+        }
+        else
+        {
+            _logger.LogInformation($"Order status: retry");
+            return StatusCode((int)HttpStatusCode.InternalServerError);
+        }
+    }
 
-        return Ok();
+
+    private bool TryAcceptOrder()
+    {
+        var result = _random.Next(1, 5);
+
+        return result > 2;
     }
 }

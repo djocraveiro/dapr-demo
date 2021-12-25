@@ -14,5 +14,9 @@ spec:
         key: redisPassword
     - name: ttlInSeconds
       value: 21600 #6 hours
+    - name: maxRetries
+      value: 3
+    - name: redisMinRetryInterval
+      value: "8ms"
 auth:
   secretStore: localsecrets
