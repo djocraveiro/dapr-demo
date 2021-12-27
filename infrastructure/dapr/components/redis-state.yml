@@ -18,5 +18,7 @@ spec:
       value: 3
     - name: redisMinRetryInterval
       value: "8ms"
+    - name: actorStateStore
+      value: "true"
 auth:
   secretStore: localsecrets

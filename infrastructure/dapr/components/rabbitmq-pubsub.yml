@@ -11,7 +11,7 @@ spec:
         name: rabbitMqConnString
         key: rabbitMqConnString
     - name: consumerID
-      value: "cart_checkout_consumer"
+      value: "order_consumer"
     - name: durable
       value: false
     - name: deletedWhenUnused

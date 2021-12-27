@@ -85,6 +85,7 @@ services:
         "-app-port", "80",
         "-config", "/dapr/dapr_config.yaml",
         "-components-path", "/dapr/components",
+        "-placement-host-address", "dapr_placement:50005"
       ]
     volumes:
       - "./infrastructure/dapr:/dapr"
@@ -93,6 +94,18 @@ services:
     network_mode: "service:orderservice"
     env_file:
       - .env
+
+
+  # Dapr placement for actors
+  dapr_placement:
+    image: "daprio/dapr:1.5.0"
+    command: 
+      [
+        "./placement",
+        "-port", "50005"
+      ]
+    ports:
+      - "50005:50005"
 
 
 networks:
