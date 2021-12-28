@@ -8,8 +8,6 @@ public interface IOrderProcessingActor : IActor
     Task SubmitAsync(IEnumerable<CartItem> cartItems);
     
     Task NotifyPaymentSucceededAsync();
-    
-    Task NotifyPaymentFailedAsync();
 
     Task<bool> CancelAsync();
     

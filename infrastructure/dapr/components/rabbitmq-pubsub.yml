@@ -23,7 +23,7 @@ spec:
     - name: backOffPolicy
       value: "exponential"
     - name: backOffMaxRetries
-      value: 3
+      value: 5
     - name: backOffInitialInterval
       value: 500
 auth:

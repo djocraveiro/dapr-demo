@@ -11,8 +11,7 @@ public class OrderProcessingActor : Actor, IOrderProcessingActor, IRemindable
     #region Properties
     
     private const string OrderDetailsStateName = "OrderDetails";
-    private const string OrderStatusStateName = "OrderStatus";
-    
+
     private const string PaymentSucceededReminder = "PaymentSucceeded";
     private const string PaymentFailedReminder = "PaymentFailed";
 
@@ -41,11 +40,12 @@ public class OrderProcessingActor : Actor, IOrderProcessingActor, IRemindable
     
     #endregion
 
+    
     #region IOrderProcessingActor implementation
 
     public async Task SubmitAsync(IEnumerable<CartItem> cartItems)
     {
-        var orderState = new OrderState
+        var order = new OrderState
         {
             Id = OrderId,
             Date = DateTime.UtcNow,
@@ -53,24 +53,18 @@ public class OrderProcessingActor : Actor, IOrderProcessingActor, IRemindable
             Items = cartItems.ToList()
         };
 
-        await StateManager.SetStateAsync(OrderDetailsStateName, orderState);
-        await StateManager.SetStateAsync(OrderStatusStateName, OrderStatus.Submitted);
-        
+        await StateManager.SetStateAsync(OrderDetailsStateName, order);
+
         await RegisterReminderAsync(
             PaymentFailedReminder,
             null,
             TimeSpan.FromSeconds(30),
             TimeSpan.FromMilliseconds(-1) /*disable periodic invocations*/);
-
-        await PublishAsync(new OrderSubmittedEvent(
-            orderState.Id,
-            OrderStatus.Submitted.Name)
-        );
     }
 
     public async Task NotifyPaymentSucceededAsync()
     {
-        var statusChanged = await TryUpdateOrderStatusAsync(
+        var statusChanged = await TryUpdateOrderStateAsync(
             OrderStatus.Submitted, OrderStatus.Paid);
         
         if (statusChanged)
@@ -79,51 +73,34 @@ public class OrderProcessingActor : Actor, IOrderProcessingActor, IRemindable
             await RegisterReminderAsync(
                 PaymentSucceededReminder,
                 null,
-                TimeSpan.FromSeconds(10),
+                TimeSpan.FromSeconds(5),
                 TimeSpan.FromMilliseconds(-1));
         }
     }
 
-    public async Task NotifyPaymentFailedAsync()
-    {
-        var statusChanged = await TryUpdateOrderStatusAsync(
-            OrderStatus.Submitted, OrderStatus.Paid);
-        
-        if (statusChanged)
-        {
-            // Simulate a work time by setting a reminder.
-            await RegisterReminderAsync(
-                PaymentFailedReminder,
-                null,
-                TimeSpan.FromSeconds(10),
-                TimeSpan.FromMilliseconds(-1));
-        }
-    }
-    
     public async Task<bool> CancelAsync()
     {
-        var orderStatus = await StateManager.TryGetStateAsync<OrderStatus>(OrderStatusStateName);
+        var order = await StateManager.TryGetStateAsync<OrderState>(OrderDetailsStateName);
+
+        if (!order.HasValue)
+        {
+            Logger.LogWarning($"Order with Id: {OrderId} cannot be cancelled because it doesn't exist");
+
+            return false;
+        }
+
+        var orderStatus = order.Value.Status;
+        if ( orderStatus.Id == OrderStatus.Paid.Id || orderStatus.Id == OrderStatus.Shipped.Id)
+        {
+            Logger.LogWarning(
+                $"Order with Id: {OrderId} cannot be cancelled because it's in status {orderStatus.Name}");
+
+            return false;
+        }
+
+        order.Value.Status = OrderStatus.Cancelled;
+        await StateManager.SetStateAsync(OrderDetailsStateName, order.Value);
         
-        if (!orderStatus.HasValue)
-        {
-            Logger.LogWarning("Order with Id: {OrderId} cannot be cancelled because it doesn't exist",
-                OrderId);
-
-            return false;
-        }
-
-        if ( orderStatus.Value.Id == OrderStatus.Paid.Id || orderStatus.Value.Id == OrderStatus.Shipped.Id)
-        {
-            Logger.LogWarning("Order with Id: {OrderId} cannot be cancelled because it's in status {Status}",
-                OrderId, orderStatus.Value.Name);
-
-            return false;
-        }
-
-        await StateManager.SetStateAsync(OrderStatusStateName, OrderStatus.Cancelled);
-
-        var order = await StateManager.GetStateAsync<OrderState>(OrderDetailsStateName);
-
         await PublishAsync(new OrderCancelledEvent(
             OrderId,
             OrderStatus.Cancelled.Name,
@@ -135,15 +112,13 @@ public class OrderProcessingActor : Actor, IOrderProcessingActor, IRemindable
 
     public async Task<bool> ShipAsync()
     {
-        var statusChanged = await TryUpdateOrderStatusAsync(
+        var statusChanged = await TryUpdateOrderStateAsync(
             OrderStatus.Paid, OrderStatus.Shipped);
         
         if (statusChanged)
         {
-            var order = await StateManager.GetStateAsync<OrderState>(OrderDetailsStateName);
-
             await PublishAsync(new OrderShippedEvent(
-                order.Id,
+                OrderId,
                 OrderStatus.Shipped.Name,
                 "The order was shipped.")
             );
@@ -167,8 +142,7 @@ public class OrderProcessingActor : Actor, IOrderProcessingActor, IRemindable
     public Task ReceiveReminderAsync(string reminderName, byte[] state, TimeSpan dueTime, TimeSpan period)
     {
         Logger.LogInformation(
-            "Received {Actor}[{ActorId}] reminder: {Reminder}",
-            nameof(OrderProcessingActor), OrderId, reminderName);
+            $"Received {nameof(OrderProcessingActor)}[{OrderId}] reminder: {reminderName}");
 
         return reminderName switch
         {
@@ -180,26 +154,32 @@ public class OrderProcessingActor : Actor, IOrderProcessingActor, IRemindable
 
     private async Task OnPaymentSucceededSimulatedWorkDoneAsync()
     {
-        var order = await StateManager.GetStateAsync<OrderState>(OrderDetailsStateName);
+        var statusChanged = await TryUpdateOrderStateAsync(
+            OrderStatus.Paid, OrderStatus.Shipped);
 
-        await PublishAsync(new OrderPaidEvent(
-            OrderId,
-            OrderStatus.Paid.Name,
-            "The payment was performed.",
-            order.Items
-                .Select(orderItem => new OrderStockItem(orderItem.Id, orderItem.Quantity)))
-        );
+        if (statusChanged)
+        {
+            await PublishAsync(new OrderShippedEvent(
+                OrderId,
+                OrderStatus.Shipped.Name,
+                "The order was shipped.")
+            );
+        }
     }
 
     private async Task OnPaymentFailedSimulatedWorkDoneAsync()
     {
-        var order = await StateManager.GetStateAsync<OrderState>(OrderDetailsStateName);
+        var statusChanged = await TryUpdateOrderStateAsync(
+            OrderStatus.Submitted, OrderStatus.Cancelled);
 
-        await PublishAsync(new OrderCancelledEvent(
-            OrderId,
-            OrderStatus.Cancelled.Name,
-            "The order was cancelled because payment failed.")
-        );
+        if (statusChanged)
+        {
+            await PublishAsync(new OrderCancelledEvent(
+                OrderId,
+                OrderStatus.Cancelled.Name,
+                "The order was cancelled because payment failed.")
+            );
+        }
     }
     
     #endregion
@@ -212,7 +192,7 @@ public class OrderProcessingActor : Actor, IOrderProcessingActor, IRemindable
     protected override Task OnActivateAsync()
     {
         // Provides opportunity to perform some optional setup.
-        Logger.LogInformation("Activating actor id: {Id}", Id);
+        Logger.LogInformation($"Activating actor id: {Id.GetId()}");
         
         return Task.CompletedTask;
     }
@@ -220,26 +200,26 @@ public class OrderProcessingActor : Actor, IOrderProcessingActor, IRemindable
     protected override Task OnDeactivateAsync()
     {
         // Provides Opportunity to perform optional cleanup.
-        Logger.LogInformation("Deactivating actor id: {Id}", Id);
+        Logger.LogInformation($"Deactivating actor id: {Id.GetId()}");
         
         return Task.CompletedTask;
     }
     
     protected override async Task OnPreActorMethodAsync(ActorMethodContext actorMethodContext)
     {
-        var orderStatus = await StateManager.TryGetStateAsync<OrderStatus>(OrderStatusStateName);
+        var order = await StateManager.TryGetStateAsync<OrderState>(OrderDetailsStateName);
 
-        _preMethodOrderStatusId = orderStatus.HasValue ? orderStatus.Value.Id : (int?)null;
+        _preMethodOrderStatusId = order.HasValue ? order.Value.Status.Id : null;
     }
 
     protected override async Task OnPostActorMethodAsync(ActorMethodContext actorMethodContext)
     {
-        var postMethodOrderStatus = await StateManager.TryGetStateAsync<OrderStatus>(OrderStatusStateName);
+        var order = await StateManager.TryGetStateAsync<OrderState>(OrderDetailsStateName);
 
-        if (postMethodOrderStatus.HasValue && _preMethodOrderStatusId != postMethodOrderStatus.Value.Id)
+        if (order.HasValue && _preMethodOrderStatusId != order.Value.Status.Id)
         {
-            Logger.LogInformation("Order with Id: {OrderId} has been updated to status {Status}",
-                OrderId, postMethodOrderStatus.Value.Name);
+            Logger.LogInformation(
+                $"Order with Id: {OrderId} has been updated to status {order.Value.Status.Name}");
         }
     }
     
@@ -248,27 +228,27 @@ public class OrderProcessingActor : Actor, IOrderProcessingActor, IRemindable
     
     #region Private Methods
     
-    private async Task<bool> TryUpdateOrderStatusAsync(OrderStatus expectedOrderStatus, OrderStatus newOrderStatus)
+    private async Task<bool> TryUpdateOrderStateAsync(OrderStatus expectedStatus, OrderStatus newStatus)
     {
-        var orderStatus = await StateManager.TryGetStateAsync<OrderStatus>(OrderStatusStateName);
-        if (!orderStatus.HasValue)
+        var order = await StateManager.TryGetStateAsync<OrderState>(OrderDetailsStateName);
+        if (!order.HasValue)
         {
-            Logger.LogWarning("Order with Id: {OrderId} cannot be updated because it doesn't exist",
-                OrderId);
+            Logger.LogWarning($"Order with Id: {OrderId} cannot be updated because it doesn't exist");
 
             return false;
         }
 
-        if (orderStatus.Value.Id != expectedOrderStatus.Id)
+        var orderStatus = order.Value.Status;
+        if (orderStatus.Id != expectedStatus.Id)
         {
-            Logger.LogWarning(
-                "Order with Id: {OrderId} is in status {Status} instead of expected status {ExpectedStatus}",
-                OrderId, orderStatus.Value.Name, expectedOrderStatus.Name);
+            Logger.LogWarning($"Order with Id: {OrderId} " +
+                $"is in status {orderStatus.Name} instead of expected status {expectedStatus.Name}");
 
             return false;
         }
 
-        await StateManager.SetStateAsync(OrderStatusStateName, newOrderStatus);
+        order.Value.Status = newStatus;
+        await StateManager.SetStateAsync(OrderDetailsStateName, order.Value);
 
         return true;
     }

@@ -6,6 +6,7 @@ using Dapr.Actors;
 using Dapr.Actors.Client;
 using Microsoft.AspNetCore.Mvc;
 using OrderService.Actors;
+using OrderService.Extensions;
 using OrderService.Structures.Events;
 using OrderService.Structures.Models;
 
@@ -58,25 +59,7 @@ public class DaprController : ControllerBase
             {
                 pubsubname = _cartEventBus.pubsubname,
                 topic= _cartEventBus.topic,
-                route = "cart_checkout"
-            },
-            new
-            {
-                pubsubname = _cartEventBus.pubsubname,
-                topic= nameof(OrderSubmittedEvent),
                 route = "order_submitted"
-            },
-            new
-            {
-                pubsubname = _cartEventBus.pubsubname,
-                topic= nameof(OrderPaidEvent),
-                route = "order_paid"
-            },
-            new
-            {
-                pubsubname = _cartEventBus.pubsubname,
-                topic= nameof(OrderPaymentFailedEvent),
-                route = "order_payment_failed"
             },
             new
             {
@@ -95,7 +78,7 @@ public class DaprController : ControllerBase
         return Ok(payload);
     }
 
-    [HttpPost("/cart_checkout")]
+    [HttpPost("/order_submitted")]
     public async Task<ActionResult> OrderReceived()
     {
         var jsonFormatter = new JsonEventFormatter();
@@ -108,68 +91,31 @@ public class DaprController : ControllerBase
         {
             var orderId = Guid.NewGuid();
             var actor = GetOrderProcessingActor(orderId);
-            var cartItems = JsonSerializer.Deserialize<List<CartItem>>(cloudEvent.Data?.ToString() ?? "");
+            var cartItems = cloudEvent.GetData<List<CartItem>>();
             await actor.SubmitAsync(cartItems);
             
-            _logger.LogInformation("Order accepted. OrderId: {OrderId}", orderId);
+            _logger.LogInformation($"Order ACCEPTED - {orderId}");
             return Ok();
         }
         else
         {
-            _logger.LogInformation($"Order status: retry");
+            _logger.LogInformation($"Order RETRY");
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
     }
 
-    [HttpPost("/order_submitted")]
-    public async Task<ActionResult> OrderSubmitted()
-    {
-        var jsonFormatter = new JsonEventFormatter();
-        var cloudEvent = await Request.ToCloudEventAsync(jsonFormatter);
-        
-        _logger.LogInformation("Order submitted - {Data}", cloudEvent.Data);
-        return Ok();
-    }
-
-    [HttpPost("/order_paid")]
-    public async Task<ActionResult> OrderPaid()
-    {
-        var jsonFormatter = new JsonEventFormatter();
-        var cloudEvent = await Request.ToCloudEventAsync(jsonFormatter);
-        
-        var paidEvent = JsonSerializer.Deserialize<OrderPaidEvent>(cloudEvent.Data?.ToString() ?? "");
-        if (paidEvent != null)
-        {
-            var actor = GetOrderProcessingActor(paidEvent.OrderId);
-            await actor.ShipAsync();
-        }
-
-        return Ok();
-    }
-
-    [HttpPost("/order_payment_failed")]
-    public async Task<ActionResult> OrderPaymentFailed()
-    {
-        var jsonFormatter = new JsonEventFormatter();
-        var cloudEvent = await Request.ToCloudEventAsync(jsonFormatter);
-        
-        var paidEvent = JsonSerializer.Deserialize<OrderPaymentFailedEvent>(cloudEvent.Data?.ToString() ?? "");
-        if (paidEvent != null)
-        {
-            var actor = GetOrderProcessingActor(paidEvent.OrderId);
-            await actor.CancelAsync();
-        }
-
-        return Ok();
-    }
-    
     [HttpPost("/order_cancelled")]
     public async Task<ActionResult> OrderCancelled()
     {
         var jsonFormatter = new JsonEventFormatter();
         var cloudEvent = await Request.ToCloudEventAsync(jsonFormatter);
         
-        _logger.LogInformation("Order cancelled - {Data}", cloudEvent.Data);
+        var cancelledEvent = cloudEvent.GetData<OrderCancelledEvent>();
+        if (cancelledEvent != null)
+        {
+            _logger.LogInformation($"{cancelledEvent.OrderId} - {cancelledEvent.Description}");
+        }
+        
         return Ok();
     }
     
@@ -179,7 +125,12 @@ public class DaprController : ControllerBase
         var jsonFormatter = new JsonEventFormatter();
         var cloudEvent = await Request.ToCloudEventAsync(jsonFormatter);
         
-        _logger.LogInformation("Order shipped - {Data}", cloudEvent.Data);
+        var shippedEvent = cloudEvent.GetData<OrderShippedEvent>();
+        if (shippedEvent != null)
+        {
+            _logger.LogInformation($"{shippedEvent.OrderId} - {shippedEvent.Description}");
+        }
+        
         return Ok();
     }
 
@@ -187,7 +138,7 @@ public class DaprController : ControllerBase
     [HttpPost("/simulate_pay")]
     public async Task<ActionResult> SimulatePay([FromBody] Guid orderId)
     {
-        _logger.LogInformation("Payment received - {orderId}", orderId);
+        _logger.LogInformation($"Payment received - {orderId}");
         
         var actor = GetOrderProcessingActor(orderId);
         await actor.NotifyPaymentSucceededAsync();
