@@ -188,23 +188,7 @@ public class OrderProcessingActor : Actor, IOrderProcessingActor, IRemindable
     #region Actor Overrided Methods
 
     private int? _preMethodOrderStatusId;
-    
-    protected override Task OnActivateAsync()
-    {
-        // Provides opportunity to perform some optional setup.
-        Logger.LogInformation($"Activating actor id: {Id.GetId()}");
-        
-        return Task.CompletedTask;
-    }
-    
-    protected override Task OnDeactivateAsync()
-    {
-        // Provides Opportunity to perform optional cleanup.
-        Logger.LogInformation($"Deactivating actor id: {Id.GetId()}");
-        
-        return Task.CompletedTask;
-    }
-    
+
     protected override async Task OnPreActorMethodAsync(ActorMethodContext actorMethodContext)
     {
         var order = await StateManager.TryGetStateAsync<OrderState>(OrderDetailsStateName);
