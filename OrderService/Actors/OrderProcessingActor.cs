@@ -18,6 +18,7 @@ public class OrderProcessingActor : Actor, IOrderProcessingActor, IRemindable
     private readonly IHttpClientFactory _clientFactory;
     private HttpClient DaprClient => _clientFactory.CreateClient("dapr");
     private readonly string _pubsubName;
+    private readonly string _bindingName;
 
     private Guid OrderId => Guid.Parse(Id.GetId());
 
@@ -36,6 +37,8 @@ public class OrderProcessingActor : Actor, IOrderProcessingActor, IRemindable
         var cartEventBus = Environment.GetEnvironmentVariable("CART_EVENT_BUS");
         var parts = cartEventBus?.Split('/');
         _pubsubName = parts?.First();
+        
+        _bindingName  = Environment.GetEnvironmentVariable("ORDER_BINDING");
     }
     
     #endregion
@@ -110,25 +113,6 @@ public class OrderProcessingActor : Actor, IOrderProcessingActor, IRemindable
         return true;
     }
 
-    public async Task<bool> ShipAsync()
-    {
-        var statusChanged = await TryUpdateOrderStateAsync(
-            OrderStatus.Paid, OrderStatus.Shipped);
-        
-        if (statusChanged)
-        {
-            await PublishAsync(new OrderShippedEvent(
-                OrderId,
-                OrderStatus.Shipped.Name,
-                "The order was shipped.")
-            );
-
-            return true;
-        }
-
-        return false;
-    }
-
     public Task<OrderState> GetOrderDetails()
     {
         return StateManager.GetStateAsync<OrderState>(OrderDetailsStateName); 
@@ -159,11 +143,14 @@ public class OrderProcessingActor : Actor, IOrderProcessingActor, IRemindable
 
         if (statusChanged)
         {
-            await PublishAsync(new OrderShippedEvent(
+            var shippedEvent = new OrderShippedEvent(
                 OrderId,
                 OrderStatus.Shipped.Name,
-                "The order was shipped.")
-            );
+                "The order was shipped.");
+            
+            await PublishAsync(shippedEvent);
+            
+            await InvokeOutBinding(shippedEvent);
         }
     }
 
@@ -236,7 +223,7 @@ public class OrderProcessingActor : Actor, IOrderProcessingActor, IRemindable
 
         return true;
     }
-    
+
     private async Task PublishAsync(BaseEvent @event)
     {
         var topicName = @event.GetType().Name;
@@ -246,6 +233,25 @@ public class OrderProcessingActor : Actor, IOrderProcessingActor, IRemindable
 
         await DaprClient.PostAsync($"v1.0/publish/{_pubsubName}/{topicName}", content);
     }
-    
+
+    private async Task InvokeOutBinding(BaseEvent @event)
+    {
+        var binding = new
+        {
+            data = @event,
+            metadata = new
+            {
+                ttlInSeconds = "60"
+            },
+            operation = "create"
+        };
+
+        var payload = JsonSerializer.Serialize(binding);
+        var content = new StringContent(payload, Encoding.UTF8, "application/json");
+        
+        var response = await DaprClient.PostAsync($"v1.0/bindings/{_bindingName}", content);
+        Logger.LogInformation(await response.Content.ReadAsStringAsync());
+    }
+
     #endregion
 }

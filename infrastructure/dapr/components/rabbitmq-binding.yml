@@ -1,0 +1,22 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: rabbitmq_order_binding
+  namespace: default
+spec:
+  type: bindings.rabbitmq
+  metadata:
+    - name: queueName
+      value: orderShippedBinding
+    - name: host
+      secretKeyRef:
+        name: rabbitMqConnString
+        key: rabbitMqConnString
+    - name: durable
+      value: false
+    - name: deletedWhenUnused
+      value: false
+    - name: contentType
+      value: "application/json"
+auth:
+  secretStore: localsecrets

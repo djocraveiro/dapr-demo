@@ -73,6 +73,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - CART_EVENT_BUS=rabbitmqbus/cart_checkout
+      - ORDER_BINDING=rabbitmq_order_binding
     ports:
       - "5031:80"
 

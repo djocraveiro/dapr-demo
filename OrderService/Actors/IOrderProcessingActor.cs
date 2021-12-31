@@ -10,8 +10,6 @@ public interface IOrderProcessingActor : IActor
     Task NotifyPaymentSucceededAsync();
 
     Task<bool> CancelAsync();
-    
-    Task<bool> ShipAsync();
-    
+
     Task<OrderState> GetOrderDetails();
 }

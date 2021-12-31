@@ -153,7 +153,7 @@ public class DaprController : ControllerBase
 
     private bool TrySubmitOrder()
     {
-        var result = _random.Next(1, 5);
+        var result = _random.Next(1, 6);
 
         return result > 2;
     }
