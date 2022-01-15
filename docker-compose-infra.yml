@@ -9,7 +9,9 @@ services:
       - ./infrastructure/.env.mongodb
     volumes:
       - ./infrastructure/si-mongodb-entrypoint/initial_products.json:/data/initial_products.json
+      - ./infrastructure/si-mongodb-entrypoint/initial_products_dapr.json:/data/initial_products_dapr.json
       - ./infrastructure/si-mongodb-entrypoint/populate.sh:/docker-entrypoint-initdb.d/populate.sh
+      - ./infrastructure/si-mongodb-entrypoint/init.js:/docker-entrypoint-initdb.d/init.js
       - ./si_mongodb/data/db:/data/db
     ports:
       - "27017:27017"

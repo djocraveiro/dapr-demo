@@ -10,6 +10,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 #region Add services to the container
 
+builder.Services.AddHttpClient("dapr", c =>
+    {
+        c.BaseAddress = new Uri("http://localhost:3500");
+        c.DefaultRequestHeaders.Add("User-Agent", typeof(Program).Assembly.GetName().Name);
+    });
+
 builder.Services.AddControllers()
     .AddJsonOptions(option =>
     {
@@ -19,11 +25,23 @@ builder.Services.AddControllers()
 
 builder.Services.AddSingleton<IMongoClient>(provider =>
     {
+        var clientFactory = provider.GetService<IHttpClientFactory>();
+        if (clientFactory == null)
+        {
+            throw new Exception($"no {nameof(IHttpClientFactory)} provided");
+        }
+
         const string secretKey = "mongodbConnString";
-        using var client = new Dapr.Client.DaprClientBuilder().Build();
-        var secret = client.GetSecretAsync("localsecrets", secretKey).Result;
+        const string secretStore = "localsecrets";
+        using var daprClient = clientFactory?.CreateClient("dapr");
+        var jsonDocument = daprClient
+            .GetFromJsonAsync<JsonDocument>($"/v1.0/secrets/{secretStore}/{secretKey}")
+            .GetAwaiter()
+            .GetResult();
+
+        var property = jsonDocument?.RootElement.GetProperty(secretKey);
+        var mongodbConnString = property?.GetString();
         
-        var mongodbConnString = secret?[secretKey];
         if (string.IsNullOrWhiteSpace(mongodbConnString))
         {
             throw new Exception($"invalid {secretKey}");
@@ -33,6 +51,7 @@ builder.Services.AddSingleton<IMongoClient>(provider =>
     });
 
 builder.Services.AddScoped<IProductService, ProductService>();
+//builder.Services.AddScoped<IProductService, DaprProductService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

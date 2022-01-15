@@ -277,14 +277,14 @@
     },
     {
         "image" : "https://cdn-icons-png.flaticon.com/512/853/853535.png",
-        "name" : "Man hat",
-        "description" : "Good quality hat for man",
+        "name" : "Woman hat",
+        "description" : "Good quality hat for woman",
         "price" : 19.99
     },
     {
         "image" : "https://cdn-icons-png.flaticon.com/512/1785/1785366.png",
-        "name" : "Woman hat",
-        "description" : "Good quality hat for woman",
+        "name" : "Man hat",
+        "description" : "Good quality hat for man",
         "price" : 15.99
     },
     {

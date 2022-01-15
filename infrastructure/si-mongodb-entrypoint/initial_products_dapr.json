@@ -1,0 +1,402 @@
+[
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/4892/4892165.png",
+            "name": "Man casual sneakers",
+            "description": "Casual sneakers for man",
+            "price": 24.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/5259/5259288.png",
+            "name": "Woman casual sneakers",
+            "description": "Casual sneakers for woman",
+            "price": 24.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/1839/1839349.png",
+            "name": "Man running sneakers",
+            "description": "Running sneakers for man",
+            "price": 34.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/4598/4598444.png",
+            "name": "Woman running sneakers",
+            "description": "Running sneakers for woman",
+            "price": 34.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/1020/1020534.png",
+            "name": "Man boots 1",
+            "description": "High quality man boots 1",
+            "price": 84.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/2435/2435568.png",
+            "name": "Man boots 2",
+            "description": "Good quality man boots 2",
+            "price": 54.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/3280/3280907.png",
+            "name": "Football boots",
+            "description": "Good football boots",
+            "price": 44.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/933/933769.png",
+            "name": "Woman boots 2",
+            "description": "High quality man boots",
+            "price": 114.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/622/622116.png",
+            "name": "Woman boots 2",
+            "description": "Good quality man boots",
+            "price": 94.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/2957/2957306.png",
+            "name": "Man shorts 1",
+            "description": "Short for man 1",
+            "price": 19.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/1785/1785321.png",
+            "name": "Man shorts 2",
+            "description": "Short for man 2",
+            "price": 23.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/3564/3564433.png",
+            "name": "Man shorts 3",
+            "description": "Short for man 3",
+            "price": 17.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/1176/1176972.png",
+            "name": "Woman shorts 1",
+            "description": "Short for woman 1",
+            "price": 19.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/418/418244.png",
+            "name": "Woman shorts 2",
+            "description": "Short for woman 2",
+            "price": 21.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/2990/2990536.png",
+            "name": "Woman shorts 3",
+            "description": "Short for woman 3",
+            "price": 18.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/6248/6248282.png",
+            "name": "Gloves 1",
+            "description": "Beautiful gloves 1",
+            "price": 13.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/3735/3735621.png",
+            "name": "Gloves 2",
+            "description": "Beautiful gloves 2",
+            "price": 9.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/2209/2209774.png",
+            "name": "Gloves 3",
+            "description": "Beautiful gloves 3",
+            "price": 2.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/33/33736.png",
+            "name": "Soccer ball",
+            "description": "This is a good soccer ball",
+            "price": 10.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/802/802340.png",
+            "name": "Tennis ball",
+            "description": "This is a good tennhis ball",
+            "price": 4.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/2128/2128322.png",
+            "name": "Basket ball",
+            "description": "This is a good basket ball",
+            "price": 7.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/391/391278.png",
+            "name": "T-shirt 1",
+            "description": "T-shirt 1",
+            "price": 3.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/1867/1867565.png",
+            "name": "T-shirt 2",
+            "description": "T-shirt 2",
+            "price": 7.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/1347/1347448.png",
+            "name": "T-shirt 3",
+            "description": "T-shirt 3",
+            "price": 6.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/1337/1337888.png",
+            "name": "T-shirt 4",
+            "description": "T-shirt 4",
+            "price": 5.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/399/399745.png",
+            "name": "Sunglasses",
+            "description": "Beautiful sunglasses",
+            "price": 3.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/3868/3868933.png",
+            "name": "Watch 1",
+            "description": "Beautiful watch 1",
+            "price": 199.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/878/878913.png",
+            "name": "Watch 2",
+            "description": "Beautiful watch 2",
+            "price": 170.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/6207/6207963.png",
+            "name": "Watch 3",
+            "description": "Beautiful watch 3",
+            "price": 185.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/6307/6307462.png",
+            "name": "Pocket watch",
+            "description": "Beautiful pocket watch",
+            "price": 90.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/3978/3978934.png",
+            "name": "Smartwatch 1",
+            "description": "Beautiful smartwatch 1",
+            "price": 50.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/3160/3160099.png",
+            "name": "Smartwatch 2",
+            "description": "Beautiful smartwatch 2",
+            "price": 55.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/2965/2965290.png",
+            "name": "Man shirt 1",
+            "description": "Beautiful man shirt 1",
+            "price": 35.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/4269/4269582.png",
+            "name": "Man shirt 2",
+            "description": "Beautiful man shirt 2",
+            "price": 38.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/599/599576.png",
+            "name": "Woman Shirt 1",
+            "description": "Beautiful woman shirt 1",
+            "price": 30.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/599/599574.png",
+            "name": "Woman Shirt 2",
+            "description": "Beautiful woman shirt 2",
+            "price": 33.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/3797/3797047.png",
+            "name": "Woman sweater 1",
+            "description": "Good woman sweater 1",
+            "price": 40.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/1337/1337892.png",
+            "name": "Woman sweater 2",
+            "description": "Good woman sweater 2",
+            "price": 50.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/1785/1785381.png",
+            "name": "Woman sweater 3",
+            "description": "Good woman sweater ",
+            "price": 68.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/622/622113.png",
+            "name": "Man sweater 1",
+            "description": "Good man sweater 1",
+            "price": 41.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/592/592817.png",
+            "name": "Man sweater 2",
+            "description": "Good man sweater 2",
+            "price": 49.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/957/957038.png",
+            "name": "Man sweater 3",
+            "description": "Good man sweater 3",
+            "price": 55.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/2793/2793884.png",
+            "name": "Man pants 1",
+            "description": "Good man pants 1",
+            "price": 78.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/3893/3893044.png",
+            "name": "Man pants 2",
+            "description": "Good man pants 2",
+            "price": 85.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/3497/3497423.png",
+            "name": "Woman pants 1",
+            "description": "Good woman pants 1",
+            "price": 78.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/6248/6248394.png",
+            "name": "Woman pants 2",
+            "description": "Good woman pants 2",
+            "price": 85.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/853/853535.png",
+            "name": "Woman hat",
+            "description": "Good quality hat for woman",
+            "price": 19.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/1785/1785366.png",
+            "name": "Man hat",
+            "description": "Good quality hat for man",
+            "price": 15.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/599/599565.png",
+            "name": "Top hat",
+            "description": "High quality top hat",
+            "price": 40.99
+        }
+    },
+	{
+        "value": {
+            "image": "https://cdn-icons-png.flaticon.com/512/616/616046.png",
+            "name": "Winter hat",
+            "description": "High quality winter hat",
+            "price": 10.99
+        }
+	}
+]

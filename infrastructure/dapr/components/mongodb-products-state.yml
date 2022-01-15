@@ -9,12 +9,20 @@ spec:
   version: v1
   metadata:
   - name: host
-    value: "localhost:27017"
+    secretKeyRef:
+      name: mongodbHost
+      key: mongodbHost
   - name: username
-    value: "admin"
+    secretKeyRef:
+      name: mongodbUsr
+      key: mongodbUsr
   - name: password
-    value: "admin"
+    secretKeyRef:
+      name: mongodbPwd
+      key: mongodbPwd
   - name: databaseName
     value: "app_db"
   - name: collectionName
-    value: "products"
+    value: "products_dapr"
+auth:
+  secretStore: localsecrets

@@ -33,8 +33,9 @@ public class ProductService : IProductService
         }
 
         int skip = (page - 1) * limit;
-
+        
         var products = await ProductCollection.Find(new BsonDocument())
+            .SortBy(x => x.Name)
             .Skip(skip)
             .Limit(limit)
             .ToListAsync();
