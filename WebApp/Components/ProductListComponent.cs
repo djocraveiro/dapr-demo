@@ -25,6 +25,9 @@ public class ProductListComponent : ComponentBase
     protected bool hasPreviousPage;
     protected bool hasNextPage;
     private const int PageSize = 12;
+    
+    protected double minPrice = 0;
+    protected double maxPrice = 1000;
 
     protected override async Task OnInitializedAsync()
     {
@@ -63,7 +66,8 @@ public class ProductListComponent : ComponentBase
 
     private async Task LoadPage()
     {
-        products = await ProductService.GetProducts(curPage, PageSize);
+        products = await ProductService.GetProducts(curPage, PageSize, minPrice, maxPrice);
+        
         hasPreviousPage = curPage > 1;
         hasNextPage = products.Count() == PageSize;
     }
@@ -76,5 +80,10 @@ public class ProductListComponent : ComponentBase
         { 
             ItemCount = itemCount
         });
+    }
+
+    protected async Task Refresh()
+    {
+        await LoadPage();
     }
 }

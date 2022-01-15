@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using WebApp.Models;
 using WebApp.Services.Contracts;
@@ -16,9 +17,12 @@ public class DaprProductService : IProductService
         _productsAppId = Environment.GetEnvironmentVariable("PRODUCTS_APP_ID");
     }
 
-    public async Task<IEnumerable<Product>> GetProducts(int page, int limit)
+    public async Task<IEnumerable<Product>> GetProducts(int page, int limit, double? minPrice = null,
+        double? maxPrice = null)
     {
-        var response = await DaprClient.GetAsync($"/v1.0/invoke/{_productsAppId}/method/api/products?page={page}&limit={limit}");
+        var query = BuildQuery(page, limit, minPrice, maxPrice);
+        var response = await DaprClient.GetAsync(
+            $"/v1.0/invoke/{_productsAppId}/method/api/products?{query}");
 
         if (!response.IsSuccessStatusCode)
         {
@@ -30,5 +34,23 @@ public class DaprProductService : IProductService
                         new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
         return products;
+    }
+
+    private string BuildQuery(int page, int limit, double? minPrice = null,
+        double? maxPrice = null)
+    {
+        var builder = new StringBuilder($"page={page}&limit={limit}");
+
+        if (minPrice.HasValue)
+        {
+            builder.Append($"&minPrice={minPrice}");
+        }
+        
+        if (maxPrice.HasValue)
+        {
+            builder.Append($"&maxPrice={maxPrice}");
+        }
+
+        return builder.ToString();
     }
 }

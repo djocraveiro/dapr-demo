@@ -24,7 +24,8 @@ public class ProductsController : ControllerBase
             return BadRequest("invalid request");
         }
 
-        var result = await _productService.GetAllProducts(request.Page, request.Limit);
+        var result = await _productService.GetAllProducts(request.Page, request.Limit,
+            request.MinPrice, request.MaxPrice);
 
         return Ok(result);
     }

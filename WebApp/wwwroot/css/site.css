@@ -200,3 +200,7 @@ ul {
 .list-pager p {
   margin: 0.2rem 1rem;
 }
+
+.list-filter {
+  margin: 1rem 0;
+}

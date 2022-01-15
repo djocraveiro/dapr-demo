@@ -1,8 +1,16 @@
 @inherits ProductListComponent
 
 <div>
+    <div class="list-filter">
+        <label>Filter by Price: </label>
+        <input type="text" class="numbers" @bind="minPrice" style="width: 100px;"/>
+        <span>-</span>
+        <input type="text" class="numbers" @bind="maxPrice" style="width: 100px;"/>
+        <button class="btn btn-primary" @onclick="(e => Refresh())">Refresh &#8635;</button>
+        <label style="float:right; margin: 0.8rem 0;">Sort by: Price, Desc</label>
+    </div>
     <div class="card-columns">
-        @if(products != null)
+        @if (products != null)
         {
             @foreach (var product in products)
             {
@@ -30,12 +38,12 @@
         }
     </div>
     <div class="list-pager">
-        @if(hasPreviousPage)
+        @if (hasPreviousPage)
         {
             <button class="btn btn-primary" @onclick="(e => PreviousPage())">&lt;&lt; Back</button>
         }
         <p>Page @curPage</p>
-        @if(hasNextPage)
+        @if (hasNextPage)
         {
             <button class="btn btn-primary" @onclick="(e => NextPage())">Next &gt;&gt;</button>
         }

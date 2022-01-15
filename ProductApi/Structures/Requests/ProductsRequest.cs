@@ -8,5 +8,9 @@ public class ProductsRequest
     public int Page { get; set; }
 
     [BindRequired]
-    public int Limit {get; set; }
+    public int Limit { get; set; }
+
+    public double? MinPrice { get; set; }
+
+    public double? MaxPrice { get; set; }
 }

@@ -20,7 +20,8 @@ public class ProductService : IProductService
     }
 
 
-    public async Task<IEnumerable<Product>> GetAllProducts(int page = 1, int limit = 20)
+    public async Task<IEnumerable<Product>> GetAllProducts(int page = 1, int limit = 20, double? minPrice = null,
+        double? maxPrice = null)
     {
         if (page < 1)
         {
@@ -33,9 +34,11 @@ public class ProductService : IProductService
         }
 
         int skip = (page - 1) * limit;
-        
-        var products = await ProductCollection.Find(new BsonDocument())
-            .SortBy(x => x.Name)
+
+        var filter = BuildFilterDefinition(minPrice, maxPrice);
+
+        var products = await ProductCollection.Find(filter)
+            .SortByDescending(x => x.Price)
             .Skip(skip)
             .Limit(limit)
             .ToListAsync();
@@ -66,5 +69,35 @@ public class ProductService : IProductService
 
         product.Id = document.Id.ToString();
         return product;
+    }
+    
+    
+    private static FilterDefinition<ProductDocument> BuildFilterDefinition(double? minPrice = null,
+        double? maxPrice = null)
+    {
+        if (minPrice is < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(minPrice));
+        }
+
+        if (minPrice > maxPrice)
+        {
+            throw new ArgumentException($"{nameof(minPrice)} must be equal or lower to {nameof(maxPrice)}");
+        }
+
+        var builder = Builders<ProductDocument>.Filter;
+        var filter = FilterDefinition<ProductDocument>.Empty;
+        
+        if (minPrice.HasValue)
+        {
+            filter = builder.Gte(x => x.Price, minPrice.Value);
+        }
+
+        if (maxPrice.HasValue)
+        {
+            filter = builder.And(filter, builder.Lte(x => x.Price, maxPrice.Value));
+        }
+
+        return filter;
     }
 }
