@@ -9,7 +9,7 @@ public class DaprProductService : IProductService
 {
     private readonly IHttpClientFactory _clientFactory;
     private HttpClient DaprClient => _clientFactory.CreateClient("dapr");
-    string DAPR_STORE_NAME = "mongodb-products-store";
+    string DAPR_STORE_NAME = "mongodb_store";
     private readonly ILogger<DaprProductService> _logger;
 
 

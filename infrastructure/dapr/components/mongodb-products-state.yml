@@ -2,7 +2,7 @@
 apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
-  name: mongodb-products-store
+  name: mongodb_store
   namespace: default
 spec:
   type: state.mongodb
